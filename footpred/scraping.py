@@ -3,38 +3,42 @@ from os import path
 import csv
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 BASE_URL = "https://www.soccerstats.com/"
 
 class scraper():
 
-    def __init__(self, X, y, **kwargs):
-        self.pipeline = None
-        self.kwargs = kwargs
-        self.grid = kwargs.get("gridsearch", False)  # apply gridsearch if True
-        
+    def __init__(self, **kwargs):
+
+        self.league = kwargs.get("league", 'france_2020')
+        self.months = kwargs.get("months", ['month8'])
+
     #------------------------------------------------
     # Fetching URLS
     #------------------------------------------------
-    def scrape_url_matches_by_month(self):
+    def scrape_url_matches_by_month(self, month):
+        print(f'fetching urls for month {month}')
         #Request
         response = requests.get(
             BASE_URL + 'results.asp',
-            params={'league': self.league, 'pmtype': self.month}
+            params={'league': self.league, 'pmtype': month}
             )
         #Soup
         soup = BeautifulSoup(response.text, "html.parser")
         #Table of matches
         table = soup.find('table', id= 'btable')
         #Return list of href
-        return [matche['href'] for matche in table.find_all('a', class_= "vsmall")]
+        month_url = [matche['href'] for matche in table.find_all('a', class_= "vsmall")]
+        print(f'found {len(month_url)} urls')
+        return month_url
 
     def scrape_url_matches_by_year(self):
         print(f"Searching {self.league}")
-        urls = []
+        self.urls = []
         for month in self.months:
-            urls = urls + self.scrape_url_matches_by_month()
-        return urls
+            self.urls = self.urls + self.scrape_url_matches_by_month(month)
+
     
     #------------------------------------------------
     # Init Dico
@@ -59,7 +63,8 @@ class scraper():
     #------------------------------------------------
     # Scraping DATA
     #------------------------------------------------
-    def scrape_data_from_url(self):
+    def scrape_data_from_url(self, url):
+        print(url)
         #Request
         response = requests.get(BASE_URL + url)
 
@@ -170,8 +175,18 @@ class scraper():
         self.dico_data['tm0_35_a'].append(tm2_stats.find_all('tr')[17].find_all('font')[1].text.replace('%',''))
         self.dico_data['tm1_BTS_a'].append(tm2_stats.find_all('tr')[19].find_all('font')[0].text.replace('%','')) # % matches where both teams scored
         self.dico_data['tm0_BTS_a'].append(tm2_stats.find_all('tr')[19].find_all('font')[1].text.replace('%',''))
-        
-
+    
+    def save_datas(self):
+        print('Saving csv file')
+        df = pd.DataFrame(self.dico_data)
+        df.to_csv(index=False)
+        import pdb; pdb.set_trace()
+    
+    def fetching_datas(self):
+        print('Scrapping !')
+        for url in self.urls:
+            self.scrape_data_from_url(url)
+            
     #------------------------------------------------
     # MAIN
     #------------------------------------------------
@@ -183,6 +198,23 @@ class scraper():
         self.init_dico_data()
         
         # step 3 : fill dico data
-        self.scrape_data_from_url()
+        self.fetching_datas()
 
-        print(f'End of scraping!')
+        # step 4 : saving datas
+        self.save_datas()
+        
+        
+if __name__ == '__main__':
+    param_set = [
+            dict(
+                league = 'france_2020',
+                # months = [f'month{i}' for i in range(1,13)]
+                months=['month8']
+            ),
+    ]
+    
+    for params in param_set : 
+
+        scrapp = scraper(**params)
+        scrapp.scrape()
+    print('Finito cappuccino!')
