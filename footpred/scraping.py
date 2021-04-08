@@ -192,17 +192,21 @@ class scraper():
     
     def fetching_datas(self):
         print('Scrapping !')
+        self.match_to_remove = []
         for i,url in enumerate(self.urls):
             try:
                 self.scrape_data_from_url(url)
             except:
-                self.remove_matche(i)
+                self.match_to_remove.append(i)
                 print(f'!!!pb with url : {url}!!!')
-                
-    def remove_matche(self, i):
-        self.dico_data['url'].pop(i)
-        self.dico_data['score'].pop(i)
-        self.dico_data['date'].pop(i)
+        if self.match_to_remove :
+            self.remove_matche()
+            
+    def remove_matche(self):
+        for index in sorted(self.match_to_remove, reverse=True):
+            del self.dico_data['url'][index]
+            del self.dico_data['score'][index]
+            del self.dico_data['date'][index]
         
     #------------------------------------------------
     # MAIN
