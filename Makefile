@@ -1,4 +1,14 @@
 # ----------------------------------
+#      RUN
+# ----------------------------------
+##### Package params  - - - - - - - - - - - - - - - - - - -
+
+PACKAGE_NAME=footpred
+FILENAME=scraping
+run_locally:
+	@python -m ${PACKAGE_NAME}.${FILENAME}
+	
+# ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
 install_requirements:
