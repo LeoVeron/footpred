@@ -124,12 +124,12 @@ def scrape_data_from_url(url):
     dico_data['tm1_CiBH_h'] = tm1_patterns[8].find_all('td')[1].text.replace('%','') # Conceded in both halves
 
     tm2_patterns = divs[1].find_all('tr')
-    dico_data['tm2_ClS_h'] = tm2_patterns[2].find_all('td')[2].text.replace('%','') # Clean sheets
-    dico_data['tm2_WtN_h'] = tm2_patterns[3].find_all('td')[2].text.replace('%','') # Won-to-nil
-    dico_data['tm2_SiBH_h'] = tm2_patterns[4].find_all('td')[2].text.replace('%','') # Scored in both halves
-    dico_data['tm2_BoTS_h'] = tm2_patterns[5].find_all('td')[2].text.replace('%','') # Both teams scored
-    dico_data['tm2_FtS_h'] = tm2_patterns[6].find_all('td')[2].text.replace('%','') # Failed to score
-    dico_data['tm2_LtN_h'] = tm2_patterns[7].find_all('td')[2].text.replace('%','') # Lost-to-nil
-    dico_data['tm2_CiBH_h'] = tm2_patterns[8].find_all('td')[2].text.replace('%','') # Conceded in both halves
+    dico_data['tm2_ClS_a'] = tm2_patterns[2].find_all('td')[2].text.replace('%','') # Clean sheets
+    dico_data['tm2_WtN_a'] = tm2_patterns[3].find_all('td')[2].text.replace('%','') # Won-to-nil
+    dico_data['tm2_SiBH_a'] = tm2_patterns[4].find_all('td')[2].text.replace('%','') # Scored in both halves
+    dico_data['tm2_BoTS_a'] = tm2_patterns[5].find_all('td')[2].text.replace('%','') # Both teams scored
+    dico_data['tm2_FtS_a'] = tm2_patterns[6].find_all('td')[2].text.replace('%','') # Failed to score
+    dico_data['tm2_LtN_a'] = tm2_patterns[7].find_all('td')[2].text.replace('%','') # Lost-to-nil
+    dico_data['tm2_CiBH_a'] = tm2_patterns[8].find_all('td')[2].text.replace('%','') # Conceded in both halves
 
     return dico_data
